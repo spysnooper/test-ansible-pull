@@ -1,0 +1,3 @@
+---
+# Variables comunes a todos los hosts
+ntp_server: hora.roa.es

@@ -1,0 +1,47 @@
+---
+# This playbook contains common plays that will be run on all nodes.
+- name: PING
+  ping:
+  register: hostname
+
+- name: SELINUX | set ENFORCING mode
+  command: /sbin/setenforce 1
+  register: sestatus
+
+- name: YUM | UPDATE ALL
+  yum: name=* state=latest update_cache=yes
+  
+- name: YUM | Install EPEL Repository
+  yum: name=epel-release state=latest
+
+- name: YUM | Install common packages
+  yum: name={{ item }} state=latest
+  with_items:
+  - mc
+  - bash-completion
+  - tree
+  - chrony
+  - libselinux-python
+  - policycoreutils-python
+  - vim-enhanced
+  - setroubleshoot-server
+  - setools-console
+  
+  
+- name: TIMEZONE | set timezone to Europe/Madrid
+  timezone: name=Europe/Madrid
+  
+- name: CHRONY | Start
+  service: name=chronyd enabled=true state=started
+  
+- name: FILE | CONFIGURE NTP Client - CHRONY
+  template: src=chrony.conf.j2 dest=/etc/chrony.conf owner=root group=root mode=0644
+  notify: restart chronyd
+
+- name: FIREWALLD | Installing FIREWALLD
+  yum: name={{ item }} state=latest
+  with_items:
+  - firewalld
+       
+- name: FIREWALLD | Start
+  service: name=firewalld enabled=true state=started
