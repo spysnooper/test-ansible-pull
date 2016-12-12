@@ -1,10 +1,5 @@
 # If this file is modified it will be copied from this repo to the 
-# final hosts by ansible pull the next time the Cron Daemon run the task
----
-- name: PING
-  ping:
-  register: hostname
-  
+# final hosts by ansible-pull the next time the Cron Daemon run the task
 - file:
     path: /tmp/test.tmp
     state: touch
